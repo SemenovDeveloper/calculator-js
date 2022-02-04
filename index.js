@@ -2,17 +2,49 @@ class App extends React.Component {
   constructor(props) {
     super(props); {
       this.state = {
-        result: "",
-        currentValue: "",
-        perviousValue: "",
-        formula: "",
+        result: "1",
+        currentValue: "0",
+        perviousValue: "2",
       }
+      this.numberBtn=this.numberBtn.bind(this);
+      this.clearInput=this.clearInput.bind(this);
+      this.deleteNumber=this.deleteNumber.bind(this);
+      this.plusMinus=this.plusMinus.bind(this);
     }
   }
 
-  pressNumberBtn() {
-    this.setState()
+  plusMinus() {   
+    const input = this.state.currentValue; 
+    if(input.startsWith("-")){
+      this.setState({
+        currentValue: input.slice(1, input.length)
+      })
+    } else {
+      this.setState({
+        currentValue: "-" + input
+      })
+    }
   }
+
+  numberBtn(e) {
+    const value = e.target.value;
+    this.setState({
+      currentValue: this.state.currentValue + value,
+    });
+  }
+
+  deleteNumber() {
+    const input = this.state.currentValue
+    this.setState({
+      currentValue: input.slice(0, input.length-1)
+    })
+  }
+  
+  clearInput() {
+    this.setState({
+      currentValue: "0"
+    });
+  }  
 
   render() {
     return (
@@ -23,7 +55,12 @@ class App extends React.Component {
           <br/>
           {this.state.currentValue}
         </div>
-        <Buttons />
+        <Buttons
+          numberBtn={this.numberBtn}
+          clearInput={this.clearInput}
+          deleteNumber={this.deleteNumber}
+          plusMinus={this.plusMinus}   
+        />
         <div id="footer">footer</div>                
       </div>
     )
@@ -33,25 +70,25 @@ class App extends React.Component {
 function Buttons (props) {
     return (
       <div id="buttons">
-        <div className="btn">C</div>
-        <div className="btn">DEL</div>
-        <div className="btn">+/-</div>
-        <div className="btn">+</div>
-        <div className="btn">1</div>
-        <div className="btn">2</div>
-        <div className="btn">3</div>
-        <div className="btn">-</div>
-        <div className="btn">4</div>
-        <div className="btn">5</div>
-        <div className="btn">6</div>
-        <div className="btn">*</div>
-        <div className="btn">7</div>
-        <div className="btn">8</div>
-        <div className="btn">9</div>
-        <div className="btn">/</div>
-        <div className="btn col-2">0</div>
-        <div className="btn">.</div>
-        <div className="btn">=</div>
+        <button id="clear" onClick={props.clearInput}>C</button>
+        <button id="del" onClick={props.deleteNumber}>DEL</button>
+        <button id="plus-minus" onClick={props.plusMinus}>+/-</button>
+        <button id="plus" onClick={props.numberBtn} value="+">+</button>
+        <button id="one" onClick={props.numberBtn} value="1">1</button>
+        <button id="two" onClick={props.numberBtn} value="2">2</button>
+        <button id="three" onClick={props.numberBtn} value="3">3</button>
+        <button id="minus" onClick={props.numberBtn} value="-">-</button>
+        <button id="four" onClick={props.numberBtn} value="4">4</button>
+        <button id="five" onClick={props.numberBtn} value="5">5</button>
+        <button id="six" onClick={props.numberBtn} value="6">6</button>
+        <button id="multiply" onClick={props.numberBtn} value="*">*</button>
+        <button id="seven" onClick={props.numberBtn} value="7">7</button>
+        <button id="eight" onClick={props.numberBtn} value="8">8</button>
+        <button id="nine" onClick={props.pnumberBtn} value="9">9</button>
+        <button id="divide" onClick={props.numberBtn} value="/">/</button>
+        <button id="zero" className="col-2"onClick={props.numberBtn} value="0">0</button>
+        <button id="dot" onClick={props.numberBtn} value=".">.</button>
+        <button id="equal" onClick={props.numberBtn} value="=">=</button>
       </div>          
     )
 }
