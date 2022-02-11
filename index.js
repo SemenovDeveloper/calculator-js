@@ -1,11 +1,11 @@
 const initialState = {
-  result: "0",
-  currentValue: "0",
-  perviousValue: "0",
+  formula: "",
+  currentValue: "",
+  perviousValue: "",
 };
 
-const isOperator = /[*/+‑]/;
-const endsWithOperator = /[*/+‑]$/;
+const isOperator = /[*\/+-]/;
+const endsWithOperator = /[*\/+-]$/;
 
 class App extends React.Component {
   constructor(props) {
@@ -19,50 +19,52 @@ class App extends React.Component {
       this.equal=this.equal.bind(this);
       this.decimals=this.decimals.bind(this);
     }
-  };
+  }
 
-  numbers(e) {
-    const input = this.state.currentValue;
+  numbers(e) {    
+    const currentValue = this.state.currentValue;
     const value = e.target.value;
-    if(input.startsWith("0") && !input.startsWith("0.")){
-      this.setState({
-        currentValue: value,
-      });
-    } else {
-      this.setState({
-        currentValue: input + value,
-      })
+    
+    if (currentValue.length < 19) {
+      if(currentValue.startsWith("0") && !currentValue.startsWith("0.")){
+        this.setState({
+          currentValue: value,
+        });
+      } else {
+        this.setState({
+          currentValue: currentValue + value,
+        })
+      }
     }
   }
 
   decimals() {
-    const input = this.state.currentValue;
+    const currentValue = this.state.currentValue;
     const dot = "."
-    if(!input.includes(dot)){
+    if(!currentValue.includes(dot)){
       this.setState({
-        currentValue: input + dot
+        currentValue: currentValue + dot
       })
     }
-
   }
 
   minusPrefix() {   
-    const input = this.state.currentValue; 
-    if(input.startsWith("-")){
+    const currentValue = this.state.currentValue; 
+    if(currentValue.startsWith("-")){
       this.setState({
-        currentValue: input.slice(1, input.length)
+        currentValue: currentValue.slice(1, currentValue.length)
       })
-    } else {
+    } else if(currentValue !== "0") {
       this.setState({
-        currentValue: "-" + input
+        currentValue: "-" + currentValue
       })
     }
   }
 
   deleteNumber() {
-    const input = this.state.currentValue
+    const currentValue = this.state.currentValue
     this.setState({
-      currentValue: input.slice(0, input.length-1)
+      currentValue: currentValue.slice(0, currentValue.length-1)
     })
   }
   
@@ -71,35 +73,69 @@ class App extends React.Component {
   }  
 
   operators(e) {
+    const bank = this.state.perviousValue; 
     const input = this.state.currentValue;
     const operator = e.target.value;
-    if(!endsWithOperator.test(input)){
+    const formula = this.state.formula;
+    const expression = bank ? (bank + operator + input).replace(/--/, "+").replace(isOperator, operator) : input;
+    console.log(input, bank, formula, expression);
+  // if(endsWithOperator.test(bank)) {
+  //   this.setState({
+  //     formula: bank.replace(endsWithOperator, operator),
+  //     perviousValue: bank.replace(endsWithOperator, operator),
+  //   })
+  // } else if(input==)
+
+    if(!endsWithOperator.test(bank)){
+      const result = eval(expression).toString();    
       this.setState({
-        perviousValue: input + operator,
-        currentValue: "0"
+        formula: result + operator, 
+        perviousValue: result + operator,
+        currentValue: ""
       })
-    } else {
+    } else if(input !== "") {
+      const result = eval(expression).toString()
       this.setState({
-        perviousValue: input.replace(isOperator, operator),
+        formula: result + operator, 
+        perviousValue: result + operator,
+        currentValue: ""
+      })
+    } else {      
+      this.setState({
+        formula: bank.replace(endsWithOperator, operator),
+        perviousValue: bank.replace(endsWithOperator, operator),
       })
     }
-
   }
 
   equal() {
-    this.setState({
-      perviousValue: eval(this.state.perviousValue + this.state.currentValue)
-    })
+    const input = this.state.currentValue;
+    const bank = this.state.perviousValue;
+    const formula = this.state.formula;
+    const expression = (bank + input).replace(/--/, "+");
+    if(isOperator.test(bank)){
+      const result = String(eval(expression));
+      this.setState({
+        formula: expression + "=" + result,
+        perviousValue: result + bank[bank.length-1],
+      })
+    } else {
+      this.setState ({
+        formula: input + "=",
+        perviousValue: input,
+      })
+    }
   }
-
   render() {
     return (
       <div id="container">
         <h1>Calculator</h1>
-        <div id="display">
-          {this.state.perviousValue}
+        <div id="display">          
+          f: {this.state.formula}
           <br/>
-          {this.state.currentValue}
+          b: {this.state.perviousValue}
+          <br/>
+          i: {this.state.currentValue}
         </div>
         <Buttons
           numbers={this.numbers}
@@ -117,140 +153,140 @@ class App extends React.Component {
 };
 
 function Buttons (props) {
-    return (
-      <div id="buttons">
-        <button 
-          id="clear" 
-          onClick={props.clearInput}
-        >
-          C
-        </button>
-        <button 
-          id="del" 
-          onClick={props.deleteNumber}
-        >
-          DEL
-        </button>
-        <button 
-          id="minus-prefix" 
-          onClick={props.minusPrefix}
-        >
-          +/-
-        </button>
-        <button 
-          id="plus"
-          onClick={props.operators} 
-          value="+"
-        >
-          +
-        </button>
-        <button 
-          id="one" 
-          onClick={props.numbers} 
-          value="1"
-        >
-          1
-        </button>
-        <button 
-          id="two" 
-          onClick={props.numbers} 
-          value="2"
-        >
-          2
-        </button>
-        <button 
-          id="three" 
-          onClick={props.numbers} 
-          value="3"
-        >
-          3
-        </button>
-        <button 
-          id="minus" 
-          onClick={props.operators} 
-          value="-"
-        >
-          -
-        </button>
-        <button 
-          id="four" 
-          onClick={props.numbers} 
-          value="4"
-        >
-          4
-        </button>
-          <button 
-          id="five" 
-          onClick={props.numbers} 
-          value="5"
-        >
-          5
-        </button>
-        <button 
-          id="six" 
-          onClick={props.numbers} 
-          value="6"
-        >
-          6
-        </button>
-        <button 
-          id="multiply" 
-          onClick={props.operators} 
-          value="*"
-        >
-          *
-        </button>
-        <button 
-          id="seven" 
-          onClick={props.numbers} 
-          value="7"
-        >
-          7
-        </button>
-        <button 
-          id="eight" 
-          onClick={props.numbers} 
-          value="8"
-        >
-          8
-        </button>
-        <button 
-          id="nine" 
-          onClick={props.pnumberBtn} 
-          value="9"
-        >
-          9
-        </button>
-        <button 
-          id="divide" 
-          onClick={props.operators} 
-          value="/"
-        >
-          /
-        </button>
-        <button 
-        id="zero"
-        className="col-2"
+  return (
+    <div id="buttons">
+      <button 
+        id="clear" 
+        onClick={props.clearInput}
+      >
+        C
+      </button>
+      <button 
+        id="del" 
+        onClick={props.deleteNumber}
+      >
+        DEL
+      </button>
+      <button 
+        id="minus-prefix" 
+        onClick={props.minusPrefix}
+      >
+        +/-
+      </button>
+      <button 
+        id="plus"
+        onClick={props.operators} 
+        value="+"
+      >
+        +
+      </button>
+      <button 
+        id="one" 
         onClick={props.numbers} 
-        value="0">
-          0
-        </button>
+        value="1"
+      >
+        1
+      </button>
+      <button 
+        id="two" 
+        onClick={props.numbers} 
+        value="2"
+      >
+        2
+      </button>
+      <button 
+        id="three" 
+        onClick={props.numbers} 
+        value="3"
+      >
+        3
+      </button>
+      <button 
+        id="minus" 
+        onClick={props.operators} 
+        value="-"
+      >
+        -
+      </button>
+      <button 
+        id="four" 
+        onClick={props.numbers} 
+        value="4"
+      >
+        4
+      </button>
         <button 
-          id="dot" 
-          onClick={props.decimals} 
-          value="."
-        >
-          .
-        </button>
-        <button 
-          id="equal" 
-          onClick={props.equal} 
-          value="="
-        >
-          =
-        </button>
-      </div>          
-    )
+        id="five" 
+        onClick={props.numbers} 
+        value="5"
+      >
+        5
+      </button>
+      <button 
+        id="six" 
+        onClick={props.numbers} 
+        value="6"
+      >
+        6
+      </button>
+      <button 
+        id="multiply" 
+        onClick={props.operators} 
+        value="*"
+      >
+        *
+      </button>
+      <button 
+        id="seven" 
+        onClick={props.numbers} 
+        value="7"
+      >
+        7
+      </button>
+      <button 
+        id="eight" 
+        onClick={props.numbers} 
+        value="8"
+      >
+        8
+      </button>
+      <button 
+        id="nine" 
+        onClick={props.numbers} 
+        value="9"
+      >
+        9
+      </button>
+      <button 
+        id="divide" 
+        onClick={props.operators} 
+        value="/"
+      >
+        /
+      </button>
+      <button 
+      id="zero"
+      className="col-2"
+      onClick={props.numbers} 
+      value="0">
+        0
+      </button>
+      <button 
+        id="dot" 
+        onClick={props.decimals} 
+        value="."
+      >
+        .
+      </button>
+      <button 
+        id="equal" 
+        onClick={props.equal} 
+        value="="
+      >
+        =
+      </button>
+    </div>          
+  )
 }
 
 
