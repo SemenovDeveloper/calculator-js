@@ -1,10 +1,7 @@
 const initialState = {
   formula: "",
-  currentValue: "",
-  perviousValue: "",
+  input: "",
 };
-
-const isOperator = /[*\/+-]/;
 const endsWithOperator = /[*\/+-]$/;
 
 class App extends React.Component {
@@ -22,49 +19,54 @@ class App extends React.Component {
   }
 
   numbers(e) {    
-    const currentValue = this.state.currentValue;
-    const value = e.target.value;
-    
-    if (currentValue.length < 19) {
-      if(currentValue.startsWith("0") && !currentValue.startsWith("0.")){
+    const {input, formula} = this.state;
+    const value = e.target.value;    
+    if (input.length < 19) {
+      if(input.startsWith("0") && !input.startsWith("0.")){
         this.setState({
-          currentValue: value,
+          input: value,
+          formula: formula + value,
         });
       } else {
         this.setState({
-          currentValue: currentValue + value,
+          input: input + value,
+          formula: formula + value
         })
       }
     }
   }
 
   decimals() {
-    const currentValue = this.state.currentValue;
-    const dot = "."
-    if(!currentValue.includes(dot)){
+    const {input, formula} = this.state;
+    const dot = ".";
+    if(!input.includes(dot)){
       this.setState({
-        currentValue: currentValue + dot
+        input: input + dot,
+        formula: formula + dot
       })
     }
   }
 
   minusPrefix() {   
-    const currentValue = this.state.currentValue; 
-    if(currentValue.startsWith("-")){
+    const {input, formula} = this.state;
+    if(input.startsWith("-")){
       this.setState({
-        currentValue: currentValue.slice(1, currentValue.length)
+        input: input.slice(1, input.length),
+        formula: formula.slice(0, formula.length - input.length) + input.slice(1, input.length)
       })
-    } else if(currentValue !== "0") {
+    } else if(input !== "0") {
       this.setState({
-        currentValue: "-" + currentValue
+        input: "-" + input,
+        formula: formula.slice(0, formula.length - input.length) + "-" + input
       })
     }
   }
 
   deleteNumber() {
-    const currentValue = this.state.currentValue
+    const {input, formula} = this.state;
     this.setState({
-      currentValue: currentValue.slice(0, currentValue.length-1)
+      input: input.slice(0, input.length-1),
+      formula: formula.slice(0, formula.length-1)
     })
   }
   
@@ -73,59 +75,31 @@ class App extends React.Component {
   }  
 
   operators(e) {
-    const bank = this.state.perviousValue; 
-    const input = this.state.currentValue;
     const operator = e.target.value;
-    const formula = this.state.formula;
-    const expression = bank ? (bank + operator + input).replace(/--/, "+").replace(isOperator, operator) : input;
-    console.log(input, bank, formula, expression);
-  // if(endsWithOperator.test(bank)) {
-  //   this.setState({
-  //     formula: bank.replace(endsWithOperator, operator),
-  //     perviousValue: bank.replace(endsWithOperator, operator),
-  //   })
-  // } else if(input==)
-
-    if(!endsWithOperator.test(bank)){
-      const result = eval(expression).toString();    
-      this.setState({
-        formula: result + operator, 
-        perviousValue: result + operator,
-        currentValue: ""
+    const formula = this.state.formula.replace(/--/, "+");
+    if (!endsWithOperator.test(formula)) {
+      this.setState ({
+        formula: String(eval(formula)) + operator,
+        input: "0"
       })
-    } else if(input !== "") {
-      const result = eval(expression).toString()
+    } else {
       this.setState({
-        formula: result + operator, 
-        perviousValue: result + operator,
-        currentValue: ""
-      })
-    } else {      
-      this.setState({
-        formula: bank.replace(endsWithOperator, operator),
-        perviousValue: bank.replace(endsWithOperator, operator),
+        formula: formula.replace(endsWithOperator, operator)
       })
     }
   }
 
   equal() {
-    const input = this.state.currentValue;
-    const bank = this.state.perviousValue;
-    const formula = this.state.formula;
-    const expression = (bank + input).replace(/--/, "+");
-    if(isOperator.test(bank)){
-      const result = String(eval(expression));
+    const formula = this.state.formula.replace(/--/, "+");
+    console.log(formula);
+    if (!endsWithOperator.test(formula)){
       this.setState({
-        formula: expression + "=" + result,
-        perviousValue: result + bank[bank.length-1],
-      })
-    } else {
-      this.setState ({
-        formula: input + "=",
-        perviousValue: input,
+        formula: String(eval(formula)),
+        input: "0"    
       })
     }
   }
+  
   render() {
     return (
       <div id="container">
@@ -133,9 +107,7 @@ class App extends React.Component {
         <div id="display">          
           f: {this.state.formula}
           <br/>
-          b: {this.state.perviousValue}
-          <br/>
-          i: {this.state.currentValue}
+          i: {this.state.input}
         </div>
         <Buttons
           numbers={this.numbers}
@@ -156,130 +128,130 @@ function Buttons (props) {
   return (
     <div id="buttons">
       <button 
-        id="clear" 
+        className="all-clear" 
         onClick={props.clearInput}
+      >
+        AC
+      </button>
+      <button 
+        className="c" 
+        onClick={props.deleteNumber}
       >
         C
       </button>
       <button 
-        id="del" 
-        onClick={props.deleteNumber}
-      >
-        DEL
-      </button>
-      <button 
-        id="minus-prefix" 
+        className="operator"
         onClick={props.minusPrefix}
       >
         +/-
       </button>
       <button 
-        id="plus"
+        className="operetor"
         onClick={props.operators} 
         value="+"
       >
         +
       </button>
       <button 
-        id="one" 
+        className="number"
         onClick={props.numbers} 
         value="1"
       >
         1
       </button>
       <button 
-        id="two" 
+        className="number"
         onClick={props.numbers} 
         value="2"
       >
         2
       </button>
       <button 
-        id="three" 
+        className="number" 
         onClick={props.numbers} 
         value="3"
       >
         3
       </button>
       <button 
-        id="minus" 
+        className="operator"
         onClick={props.operators} 
         value="-"
       >
         -
       </button>
       <button 
-        id="four" 
+        className="number" 
         onClick={props.numbers} 
         value="4"
       >
         4
       </button>
         <button 
-        id="five" 
+        className="number"
         onClick={props.numbers} 
         value="5"
       >
         5
       </button>
       <button 
-        id="six" 
+        className="number"
         onClick={props.numbers} 
         value="6"
       >
         6
       </button>
       <button 
-        id="multiply" 
+        className="operator"
         onClick={props.operators} 
         value="*"
       >
         *
       </button>
       <button 
-        id="seven" 
+        className="number"
         onClick={props.numbers} 
         value="7"
       >
         7
       </button>
       <button 
-        id="eight" 
+        className="number"
         onClick={props.numbers} 
         value="8"
       >
         8
       </button>
       <button 
-        id="nine" 
+        className="number"
         onClick={props.numbers} 
         value="9"
       >
         9
       </button>
       <button 
-        id="divide" 
+        className="operator" 
         onClick={props.operators} 
         value="/"
       >
         /
       </button>
-      <button 
-      id="zero"
-      className="col-2"
-      onClick={props.numbers} 
-      value="0">
+      <button       
+        className="zero"
+        onClick={props.numbers} 
+        value="0"
+      >
         0
       </button>
       <button 
-        id="dot" 
+        className="number" 
         onClick={props.decimals} 
         value="."
       >
         .
       </button>
       <button 
-        id="equal" 
+        className="operator"
         onClick={props.equal} 
         value="="
       >
