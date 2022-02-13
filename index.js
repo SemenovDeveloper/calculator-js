@@ -1,13 +1,12 @@
-const initialState = {
-  formula: "",
-  input: "",
-};
 const endsWithOperator = /[*\/+-]$/;
 
 class App extends React.Component {
   constructor(props) {
     super(props); {
-      this.state = initialState;
+      this.state = {
+        formula: "",
+        input: "",
+      };
       this.numbers=this.numbers.bind(this);
       this.clearInput=this.clearInput.bind(this);
       this.deleteNumber=this.deleteNumber.bind(this);
@@ -39,7 +38,7 @@ class App extends React.Component {
   decimals() {
     const {input, formula} = this.state;
     const dot = ".";
-    if(!input.includes(dot)){
+    if(!input.includes(dot) && formula){
       this.setState({
         input: input + dot,
         formula: formula + dot
@@ -71,8 +70,11 @@ class App extends React.Component {
   }
   
   clearInput() {
-    this.setState(initialState);
-  }  
+    this.setState({
+      formula: "",
+      input: "",
+    })
+  }
 
   operators(e) {
     const operator = e.target.value;
@@ -91,11 +93,10 @@ class App extends React.Component {
 
   equal() {
     const formula = this.state.formula.replace(/--/, "+");
-    console.log(formula);
     if (!endsWithOperator.test(formula)){
       this.setState({
         formula: String(eval(formula)),
-        input: "0"    
+        input: String(eval(formula))    
       })
     }
   }
@@ -260,8 +261,5 @@ function Buttons (props) {
     </div>          
   )
 }
-
-
-
 
 ReactDOM.render(<App />, document.getElementById("root"))
