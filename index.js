@@ -17,15 +17,18 @@ class App extends React.Component {
     }
   }
 
-  numbers(e) {    
+  numbers(e) {
     const {input, formula} = this.state;
-    const value = e.target.value;    
+    const value = e.target.value;   
     if (input.length < 19) {
-      if(input.startsWith("0") && !input.startsWith("0.")){
+     if (input === "0") {
         this.setState({
           input: value,
-          formula: formula + value,
-        });
+          formula: 
+            value === "0" && input === "0"
+              ? formula
+              : formula.slice(0, formula.length-1) + value
+        })
       } else {
         this.setState({
           input: input + value,
@@ -34,6 +37,7 @@ class App extends React.Component {
       }
     }
   }
+
 
   decimals() {
     const {input, formula} = this.state;
@@ -53,7 +57,7 @@ class App extends React.Component {
         input: input.slice(1, input.length),
         formula: formula.slice(0, formula.length - input.length) + input.slice(1, input.length)
       })
-    } else if(input !== "0") {
+    } else if(input !== "0" && input !== "") {
       this.setState({
         input: "-" + input,
         formula: formula.slice(0, formula.length - input.length) + "-" + input
@@ -79,15 +83,17 @@ class App extends React.Component {
   operators(e) {
     const operator = e.target.value;
     const formula = this.state.formula.replace(/--/, "+");
-    if (!endsWithOperator.test(formula)) {
-      this.setState ({
-        formula: String(eval(formula)) + operator,
-        input: "0"
-      })
-    } else {
-      this.setState({
-        formula: formula.replace(endsWithOperator, operator)
-      })
+    if(formula !== ""){
+      if (!endsWithOperator.test(formula)) {
+        this.setState ({
+          formula: String(eval(formula)) + operator,
+          input: ""
+        })
+      } else {
+        this.setState({
+          formula: formula.replace(endsWithOperator, operator)
+        })
+      }
     }
   }
 
@@ -128,17 +134,18 @@ class App extends React.Component {
 function Buttons (props) {
   return (
     <div id="buttons">
-      <button 
-        className="all-clear" 
+      <button
+        id="clear"
+        className="operator" 
         onClick={props.clearInput}
       >
-        AC
+        C
       </button>
       <button 
-        className="c" 
+        className="operator" 
         onClick={props.deleteNumber}
       >
-        C
+        Del
       </button>
       <button 
         className="operator"
@@ -147,6 +154,7 @@ function Buttons (props) {
         +/-
       </button>
       <button 
+        id="add"
         className="operetor"
         onClick={props.operators} 
         value="+"
@@ -154,6 +162,7 @@ function Buttons (props) {
         +
       </button>
       <button 
+        id="one"
         className="number"
         onClick={props.numbers} 
         value="1"
@@ -161,6 +170,7 @@ function Buttons (props) {
         1
       </button>
       <button 
+        id="two"
         className="number"
         onClick={props.numbers} 
         value="2"
@@ -168,6 +178,7 @@ function Buttons (props) {
         2
       </button>
       <button 
+        id="three"
         className="number" 
         onClick={props.numbers} 
         value="3"
@@ -175,6 +186,7 @@ function Buttons (props) {
         3
       </button>
       <button 
+        id="subtract"
         className="operator"
         onClick={props.operators} 
         value="-"
@@ -182,13 +194,15 @@ function Buttons (props) {
         -
       </button>
       <button 
+        id="four"
         className="number" 
         onClick={props.numbers} 
         value="4"
       >
         4
       </button>
-        <button 
+      <button 
+        id="five"
         className="number"
         onClick={props.numbers} 
         value="5"
@@ -196,6 +210,7 @@ function Buttons (props) {
         5
       </button>
       <button 
+        id="six"
         className="number"
         onClick={props.numbers} 
         value="6"
@@ -203,6 +218,7 @@ function Buttons (props) {
         6
       </button>
       <button 
+        id="multiply"
         className="operator"
         onClick={props.operators} 
         value="*"
@@ -210,6 +226,7 @@ function Buttons (props) {
         *
       </button>
       <button 
+        id="seven"
         className="number"
         onClick={props.numbers} 
         value="7"
@@ -217,6 +234,7 @@ function Buttons (props) {
         7
       </button>
       <button 
+        id="eight"
         className="number"
         onClick={props.numbers} 
         value="8"
@@ -224,6 +242,7 @@ function Buttons (props) {
         8
       </button>
       <button 
+      id="nine"
         className="number"
         onClick={props.numbers} 
         value="9"
@@ -231,6 +250,7 @@ function Buttons (props) {
         9
       </button>
       <button 
+        id="divide"
         className="operator" 
         onClick={props.operators} 
         value="/"
@@ -238,20 +258,23 @@ function Buttons (props) {
         /
       </button>
       <button       
-        className="zero"
+        id="zero"
+        className="number"
         onClick={props.numbers} 
         value="0"
       >
         0
       </button>
-      <button 
+      <button
+        id="decimal"
         className="number" 
         onClick={props.decimals} 
         value="."
       >
         .
       </button>
-      <button 
+      <button          
+        id="equals"
         className="operator"
         onClick={props.equal} 
         value="="
