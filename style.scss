@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Oxanium&display=swap');
 
+
 *{
   box-sizing: border-box;  
 }
@@ -55,12 +56,12 @@ body {
     font-size: 1.375rem;
   }
   .operator, #equals {
-    color: cyan;
+    color: rgb(0, 255, 255);
   }
   #clear, #delete {
-    color:indianred;
+    color:rgb(202, 84, 84);
     i{
-      color:indianred;
+      color:rgb(202, 84, 84);
     }
   }
   #equals {
@@ -68,7 +69,7 @@ body {
   }
 }
 
-#display {
+#display-container {
   width: 100%;
   font-family: 'Oxanium', cursive;
   div {
@@ -79,7 +80,7 @@ body {
     color: white;
     background-color: black;
   }
-  #input-dis {
+  #display {
     font-size: 1.875rem;
   }
 }

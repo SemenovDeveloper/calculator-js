@@ -50,23 +50,23 @@ body {
   #buttons .operator, #buttons #equals {
     color: cyan; }
   #buttons #clear, #buttons #delete {
-    color: indianred; }
+    color: #ca5454; }
     #buttons #clear i, #buttons #delete i {
-      color: indianred; }
+      color: #ca5454; }
   #buttons #equals {
     grid-column: 3/5; }
 
-#display {
+#display-container {
   width: 100%;
   font-family: 'Oxanium', cursive; }
-  #display div {
+  #display-container div {
     width: 100%;
     outline: none;
     text-align: right;
     height: 40px;
     color: white;
     background-color: black; }
-  #display #input-dis {
+  #display-container #display {
     font-size: 1.875rem; }
 
 .footer {

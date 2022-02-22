@@ -4,8 +4,8 @@ class App extends React.Component {
   constructor(props) {
     super(props); {
       this.state = {
-        formula: "",
-        input: "",
+        formula: "0",
+        input: "0",
       };
       this.numbers=this.numbers.bind(this);
       this.clearInput=this.clearInput.bind(this);
@@ -19,15 +19,17 @@ class App extends React.Component {
 
   numbers(e) {
     const {input, formula} = this.state;
-    const value = e.target.value;   
+    const value = e.target.value;
     if (input.length < 19) {
      if (input === "0") {
         this.setState({
           input: value,
           formula: 
-            value === "0" && input === "0"
-              ? formula
-              : formula.slice(0, formula.length-1) + value
+            value === "0" && endsWithOperator.test(formula)
+              ? formula + value
+              : endsWithOperator.test(formula)
+                ? formula + value
+                : formula.slice(0, formula.length-1) + value
         })
       } else {
         this.setState({
@@ -45,19 +47,21 @@ class App extends React.Component {
     if(!input.includes(dot) && formula){
       this.setState({
         input: input + dot,
-        formula: formula + dot
+        formula: input === "0" && endsWithOperator.test(formula)
+          ? formula + "0" + dot
+          : formula + dot
       })
     }
   }
 
   minusPrefix() {   
     const {input, formula} = this.state;
-    if(input.startsWith("-")){
+    if (input.startsWith("-")) {
       this.setState({
         input: input.slice(1, input.length),
         formula: formula.slice(0, formula.length - input.length) + input.slice(1, input.length)
       })
-    } else if(input !== "0" && input !== "") {
+    } else if (input !== "0" && input !== "") {
       this.setState({
         input: "-" + input,
         formula: formula.slice(0, formula.length - input.length) + "-" + input
@@ -77,8 +81,8 @@ class App extends React.Component {
   
   clearInput() {
     this.setState({
-      formula: "",
-      input: "",
+      formula: "0",
+      input: "0",
     })
   }
 
@@ -89,7 +93,7 @@ class App extends React.Component {
       if (!endsWithOperator.test(formula)) {
         this.setState ({
           formula: String(eval(formula)) + operator,
-          input: ""
+          input: "0"
         })
       } else {
         this.setState({
@@ -113,9 +117,9 @@ class App extends React.Component {
     return (
       <div id="container">
         <h1 className="header">Calculator</h1>
-        <div id="display">
-          <div id="formula-dis">{this.state.formula}</div>
-          <div id="input-dis">{this.state.input}</div>
+        <div id="display-container">
+          <div id="formula">{this.state.formula}</div>
+          <div id="display">{this.state.input}</div>
         </div>
         <Buttons
           numbers={this.numbers}
