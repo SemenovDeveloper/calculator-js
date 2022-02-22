@@ -69,7 +69,9 @@ class App extends React.Component {
     const {input, formula} = this.state;
     this.setState({
       input: input.slice(0, input.length-1),
-      formula: formula.slice(0, formula.length-1)
+      formula: input.length >= 1
+        ? formula.slice(0, formula.length-1)
+        : formula
     })
   }
   
@@ -99,7 +101,7 @@ class App extends React.Component {
 
   equal() {
     const formula = this.state.formula.replace(/--/, "+");
-    if (!endsWithOperator.test(formula)){
+    if (!endsWithOperator.test(formula) && formula !== ""){
       this.setState({
         formula: String(eval(formula)),
         input: String(eval(formula))    
@@ -110,11 +112,10 @@ class App extends React.Component {
   render() {
     return (
       <div id="container">
-        <h1>Calculator</h1>
-        <div id="display">          
-          f: {this.state.formula}
-          <br/>
-          i: {this.state.input}
+        <h1 className="header">Calculator</h1>
+        <div id="display">
+          <input id="formula-dis" defaultValue={this.state.formula} placeholder="0"></input>
+          <input id="input-dis"defaultValue={this.state.input} placeholder="0"></input>
         </div>
         <Buttons
           numbers={this.numbers}
@@ -125,7 +126,7 @@ class App extends React.Component {
           equal={this.equal}
           decimals={this.decimals}
         />
-        <div id="footer">footer</div>                
+        <div className="footer"><a id="footer" target="_blank" href="https://github.com/SemenovDeveloper"><i className="fab fa-github-square"></i>by SemenovDeveloper</a></div>                
       </div>
     )
   }
@@ -136,26 +137,25 @@ function Buttons (props) {
     <div id="buttons">
       <button
         id="clear"
-        className="operator" 
         onClick={props.clearInput}
       >
         C
       </button>
       <button 
-        className="operator" 
+        id="delete"
         onClick={props.deleteNumber}
       >
-        Del
+        <i className="fa-solid fa-delete-left"></i>
       </button>
       <button 
         className="operator"
         onClick={props.minusPrefix}
       >
-        +/-
+        <i className="fa-solid fa-plus-minus"></i>
       </button>
       <button 
         id="add"
-        className="operetor"
+        className="operator"
         onClick={props.operators} 
         value="+"
       >
