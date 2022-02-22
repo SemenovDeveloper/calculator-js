@@ -114,8 +114,8 @@ class App extends React.Component {
       <div id="container">
         <h1 className="header">Calculator</h1>
         <div id="display">
-          <input id="formula-dis" defaultValue={this.state.formula} placeholder="0"></input>
-          <input id="input-dis"defaultValue={this.state.input} placeholder="0"></input>
+          <div id="formula-dis">{this.state.formula}</div>
+          <div id="input-dis">{this.state.input}</div>
         </div>
         <Buttons
           numbers={this.numbers}

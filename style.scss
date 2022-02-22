@@ -71,15 +71,16 @@ body {
 #display {
   width: 100%;
   font-family: 'Oxanium', cursive;
-  input {
+  div {
     width: 100%;
+    outline: none;
     text-align: right;
-    height: 50px;
+    height: 40px;
     color: white;
     background-color: black;
   }
   #input-dis {
-    font-size: 2rem;
+    font-size: 1.875rem;
   }
 }
 
