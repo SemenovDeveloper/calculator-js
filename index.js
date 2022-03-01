@@ -130,7 +130,16 @@ class App extends React.Component {
           equal={this.equal}
           decimals={this.decimals}
         />
-        <div className="footer"><a id="footer" target="_blank" href="https://github.com/SemenovDeveloper"><i className="fab fa-github-square"></i>by SemenovDeveloper</a></div>                
+        <div className="footer">
+          <a 
+            id="footer" 
+            target="_blank" 
+            href="https://github.com/SemenovDeveloper"
+          >
+            <i className="fab fa-github-square"></i>
+            by SemenovDeveloper
+          </a>
+        </div>                
       </div>
     )
   }
